@@ -1,187 +1,214 @@
 ﻿using System;
 using System.Collections.Generic;
+namespace John_Console_App_Battleship.classes
+{
+    public class UserBattleShipGrid
+    {
+        private readonly int _numberRows;
+        private readonly int _numberCols;
+        private readonly char _userTargetChar;
 
-public class UserBattleShipGrid {
-    private int _numberRows;
-    private int _numberCols;
-    private char _UserTargetChar;
+        private readonly char[,] _targetLocations;
 
-    private char[,] _targetLocations;
+        private readonly List<char> _rowNumbers = new();
 
-    private List<char> _RowNumbers = new List<char>();
+        public UserBattleShipGrid(int numberColums, int numberRows)
+        {
+            _numberCols = numberColums;
+            _numberRows = numberRows;
 
-    public UserBattleShipGrid(int numberColums, int numberRows) {
-        _numberCols = numberColums;
-        _numberRows = numberRows;
+            ActorName = "Default Actor Name";
 
-        ActorName = "Default Actor Name";
+            RunGame = true;
 
-        RunGame = true;
+            UserTriedAndFailed = false;
+            UserTriedAndFailedCount = 0;
 
-        UserTriedAndFailed = false;
-        UserTriedAndFailedCount = 0;
+            BattleShipSunk = false;
 
-        BattleShipSunk = false;
+            _userTargetChar = 'O';
 
-        _UserTargetChar = 'O';
+            _rowNumbers.Add('A');
+            _rowNumbers.Add('B');
+            _rowNumbers.Add('C');
+            _rowNumbers.Add('D');
+            _rowNumbers.Add('E');
+            _rowNumbers.Add('F');
+            _rowNumbers.Add('G');
+            _rowNumbers.Add('H');
+            _rowNumbers.Add('I');
+            _rowNumbers.Add('J');
 
-        _RowNumbers.Add('A');
-        _RowNumbers.Add('B');
-        _RowNumbers.Add('C');
-        _RowNumbers.Add('D');
-        _RowNumbers.Add('E');
-        _RowNumbers.Add('F');
-        _RowNumbers.Add('G');
-        _RowNumbers.Add('H');
-        _RowNumbers.Add('I');
-        _RowNumbers.Add('J');
+            _targetLocations = new char[GetNumberRows(), GetNumberColumns()];
 
-        _targetLocations = new char[getNumberRows(), getNumberColumns()];
+            ResetUserShipStatus();
 
-        resetUserShipStatus();
-
-    }
-
-    public char PlayerRow { get; private set; }
-
-    public int PlayerColumn { get; private set; }
-
-    public bool PlayerFires { get; private set; }
-
-    public int ShipStrikes { get; private set; }
-
-    public bool RunGame { get; set; }
-
-    public bool UserTriedAndFailed { get; set; }
-
-    public string ActorName { get; set; }
-
-    public int UserTriedAndFailedCount { get; set; }
-
-    public bool BattleShipSunk { get; set; }
-
-    public int CurrentNumberOfTurns { get; set; }
-
-    public void resetUserShipStatus() {
-
-        // updateRestartGameStatus(false);
-
-        PlayerRow = '_';
-        PlayerColumn = -99;
-
-        updatePlayerFires(false);
-
-        updateNumberOfHits(0);
-
-        isTesting = false;
-
-        for (int row = 0; row < getNumberRows(); row++) {
-            for (int col = 0; col < getNumberColumns(); col++) {
-                _targetLocations[row, col] = '~';
-            }
         }
-    }
-     
 
-    public char getUserTargetChar() {
-        return _UserTargetChar;
-    }
+        public char PlayerRow { get; private set; }
 
-    public void updatePlayerColumn(int playerColumn) {
-        if ( playerColumn > 0 && playerColumn <= getNumberColumns() ) {
-            PlayerColumn = playerColumn;
-        }
-        else {
+        public int PlayerColumn { get; private set; }
+
+        public bool PlayerFires { get; private set; }
+
+        public int ShipStrikes { get; private set; }
+
+        public bool RunGame { get; set; }
+
+        public bool UserTriedAndFailed { get; set; }
+
+        public string ActorName { get; set; }
+
+        public int UserTriedAndFailedCount { get; set; }
+
+        public bool BattleShipSunk { get; set; }
+
+        public int CurrentNumberOfTurns { get; set; }
+
+        public void ResetUserShipStatus()
+        {
+
+
+            PlayerRow = '_';
             PlayerColumn = -99;
-        }
-    }
 
-    public void updatePlayerRow(char playerRow) {
-        PlayerRow = playerRow;
-    }
+            UpdatePlayerFires(false);
 
-    private int getNumberRows() {
-        return _numberRows;
-    }
+            UpdateNumberOfHits(0);
 
-    private int getNumberColumns() {
-        return _numberCols;
-    }
+            IsTesting = false;
 
-    public void updatePlayerFires(bool playerFires) {
-        PlayerFires = playerFires;
-    }
-
-    public char getTargetLocation(int column, int row) {
-        return _targetLocations[row, column];
-    }
-
-    public bool didUserFireHere(int column, int row) {
-        bool didFireHere = false;
-        if ( _targetLocations[row, column] == getUserTargetChar() ) {
-            didFireHere = true;
-        }
-        return didFireHere;
-    }
-
-    public bool areUserInputsValid() {
-        bool returnBoolean = false;
-        if (getRowIndex() >= 0 && getRowIndex() < _RowNumbers.Count) {
-            if ( PlayerColumn > 0 && PlayerColumn <= _numberCols) {
-                returnBoolean = true;
+            for (int row = 0; row < GetNumberRows(); row++)
+            {
+                for (int col = 0; col < GetNumberColumns(); col++)
+                {
+                    _targetLocations[row, col] = '~';
+                }
             }
         }
-        return returnBoolean;
-    }
 
-    public int getRowIndex() {
-        // why did creating this rowIndex variable fix this?
-        int rowIndex = _RowNumbers.FindIndex(e => e == PlayerRow);
 
-        // when I did a direct return of the _RowNumbers.FindIndex it broke the code.
-        return rowIndex;
-    }
-
-    public char getRowChar(int index) {
-
-        char charAtIndex = _RowNumbers.ElementAt(index);
-
-        return charAtIndex;
-    }
-
-    public void markUserTarget() {
-
-        if (PlayerRow != '_' && PlayerColumn != -99) {
-            _targetLocations[getRowIndex(), PlayerColumn - 1] = getUserTargetChar();
-        }
-        else {
-            updatePlayerFires(false);
+        public char GetUserTargetChar()
+        {
+            return _userTargetChar;
         }
 
-/*        for (int row = 0; row < getNumberRows(); row++) {
-            for (int col = 0; col < getNumberColumns(); col++) {
+        public void UpdatePlayerColumn(int playerColumn)
+        {
+            if (playerColumn > 0 && playerColumn <= GetNumberColumns())
+            {
+                PlayerColumn = playerColumn;
             }
-        } */
+            else
+            {
+                PlayerColumn = -99;
+            }
+        }
 
-    }
+        public void UpdatePlayerRow(char playerRow)
+        {
+            PlayerRow = playerRow;
+        }
 
-    public void updateNumberOfHits(int numberOfShipStrikes) {
-        ShipStrikes = numberOfShipStrikes;
-    }
+        private int GetNumberRows()
+        {
+            return _numberRows;
+        }
 
-    public void updateRestartGameStatus(bool gameStatus) {
-        StartGameOver = gameStatus;
-    }
+        private int GetNumberColumns()
+        {
+            return _numberCols;
+        }
 
-    public bool StartGameOver {
-        get; private set;
-    }
+        public void UpdatePlayerFires(bool playerFires)
+        {
+            PlayerFires = playerFires;
+        }
 
-    public bool isTesting {
-        get; private set;
-    }
+        public char GetTargetLocation(int column, int row)
+        {
+            return _targetLocations[row, column];
+        }
 
-    public void toggleTesting() {
-        isTesting = (isTesting) ? false : true;
+        public bool DidUserFireHere(int column, int row)
+        {
+            bool didFireHere = false;
+            if (_targetLocations[row, column] == GetUserTargetChar())
+            {
+                didFireHere = true;
+            }
+            return didFireHere;
+        }
+
+        public bool AreUserInputsValid()
+        {
+            bool returnBoolean = false;
+            if (GetRowIndex() >= 0 && GetRowIndex() < _rowNumbers.Count)
+            {
+                if (PlayerColumn > 0 && PlayerColumn <= _numberCols)
+                {
+                    returnBoolean = true;
+                }
+            }
+            return returnBoolean;
+        }
+
+        public int GetRowIndex()
+        {
+            // why did creating this rowIndex variable fix this?
+            int rowIndex = _rowNumbers.FindIndex(e => e == PlayerRow);
+
+            // when I did a direct return of the _RowNumbers.FindIndex it broke the code.
+            return rowIndex;
+        }
+
+        public char GetRowChar(int index)
+        {
+
+            char charAtIndex = _rowNumbers.ElementAt(index);
+
+            return charAtIndex;
+        }
+
+        public void MarkUserTarget()
+        {
+
+            if (PlayerRow != '_' && PlayerColumn != -99)
+            {
+                _targetLocations[GetRowIndex(), PlayerColumn - 1] = GetUserTargetChar();
+            }
+            else
+            {
+                UpdatePlayerFires(false);
+            }
+
+        
+
+        }
+
+        public void UpdateNumberOfHits(int numberOfShipStrikes)
+        {
+            ShipStrikes = numberOfShipStrikes;
+        }
+
+        public void UpdateRestartGameStatus(bool gameStatus)
+        {
+            StartGameOver = gameStatus;
+        }
+
+        public bool StartGameOver
+        {
+            get; private set;
+        }
+
+        public bool IsTesting
+        {
+            get; private set;
+        }
+
+        public void ToggleTesting()
+        {
+            IsTesting = !IsTesting;
+        }
     }
 }
